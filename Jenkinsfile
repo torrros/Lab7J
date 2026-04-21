@@ -30,7 +30,7 @@ pipeline {
             }
         }
 
-        stage('Ansible Deploy') { // ТЕПЕР ВІН ВСЕРЕДИНІ stages
+        stage('Ansible Deploy') {
             steps {
                 sshagent([SSH_CRED_ID]) {
                     sh """
