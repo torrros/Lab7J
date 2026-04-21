@@ -1,0 +1,26 @@
+- name: Deploy Containerized App
+  hosts: all
+  become: yes
+  tasks:
+    - name: Install Docker and Dependencies
+      apt:
+        name:
+          - docker.io
+          - python3-docker
+        state: present
+        update_cache: yes
+
+    - name: Ensure Docker is running
+      service:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Image from Docker hub
+      docker_container:
+        name: lab6
+        image: "torrros/lab2:latest"
+        state: started
+        restart_policy: always
+        ports:
+          - "80:80"
