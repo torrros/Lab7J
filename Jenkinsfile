@@ -28,10 +28,12 @@ pipeline {
                     if (!env.VM_IP) {
                         error "IP address not found! Terraform output is empty."
                     }
-                    echo "Successfully retrieved VM IP: ${env.VM_IP}"
-                }
+                     echo "Successfully retrieved VM IP: ${env.VM_IP}"
             }
         }
+    } 
+}   
+
 
         stage('Ansible Deploy') {
             steps {
