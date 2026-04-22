@@ -53,8 +53,8 @@ pipeline {
             echo "Deployment failed. Destroying infrastructure..."
             sh "terraform destroy -auto-approve"
         }
-        always {
-           //cleanWs()
-        }
+        /*always {
+           cleanWs()
+        }*/
     }
 }
