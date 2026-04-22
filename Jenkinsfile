@@ -36,7 +36,7 @@ pipeline {
 
         stage('Ansible Deploy') {
             steps {
-                // Невелика затримка, щоб SSH сервіс у ВМ встиг ініціалізуватися
+                // Чекаємо, поки SSH підніметься на новій ВМ
                 sleep time: 30, unit: 'SECONDS'
                 sshagent([SSH_CRED_ID]) {
                     sh """
@@ -56,9 +56,12 @@ pipeline {
             withCredentials([string(credentialsId: "${PUB_KEY_ID}", variable: 'PUBLIC_KEY')]) {
                 sh "TF_VAR_ssh_public_key='${PUBLIC_KEY}' terraform destroy -auto-approve"
             }
-        } 
-        cleanWS()
+        }
         success {
+            echo "Deployment successful!"
+        }
+        always {
+            // Очищуємо воркспейс завжди
             cleanWs()
         }
     }
