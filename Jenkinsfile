@@ -36,6 +36,8 @@ pipeline {
 
         stage('Ansible Deploy') {
             steps {
+                // Невелика затримка, щоб SSH сервіс у ВМ встиг ініціалізуватися
+                sleep time: 30, unit: 'SECONDS'
                 sshagent([SSH_CRED_ID]) {
                     sh """
                     ansible-playbook -i '${env.VM_IP},' \
@@ -51,10 +53,12 @@ pipeline {
     post {
         failure {
             echo "Deployment failed. Destroying infrastructure..."
-            sh "terraform destroy -auto-approve"
+            withCredentials([string(credentialsId: "${PUB_KEY_ID}", variable: 'PUBLIC_KEY')]) {
+                sh "TF_VAR_ssh_public_key='${PUBLIC_KEY}' terraform destroy -auto-approve"
+            }
+        } // Додано закриваючу дужку для failure
+        always {
+            cleanWs()
         }
-        /*always {
-           cleanWs()
-        }*/
     }
 }
