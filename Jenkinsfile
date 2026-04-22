@@ -54,7 +54,7 @@ pipeline {
             sh "terraform destroy -auto-approve"
         }
         always {
-            cleanWs()
+           //cleanWs()
         }
     }
 }
