@@ -49,7 +49,7 @@ users:
     shell: /bin/bash
     lock_passwd: false
     ssh_authorized_keys:
-      - "${file("/home/toros/.ssh/id_rsa.pub")}"
+      - "${var.ssh_public_key}"
 
 chpasswd:
   list: |
@@ -149,4 +149,9 @@ data "libvirt_domain_interface_addresses" "app_server_ip" {
 
 output "vm_ip" {
   value = data.libvirt_domain_interface_addresses.app_server_ip.interfaces[0].addrs[0].addr 
+}
+
+variable "ssh_public_key" {
+  type        = string
+  description = "Public SSH key for the user toros"
 }

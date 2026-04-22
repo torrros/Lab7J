@@ -19,8 +19,9 @@ pipeline {
 
         stage('Terraform Apply') {
             steps {
+		withCredentials([sshUserPrivateKey(credentialsId: 'lab7', keyFileVariable: 'SSH_KEY_FILE', publicKeyVariable: 'PUB_KEY')]) {
                 sh "terraform init"
-                sh "terraform apply -auto-approve"
+                sh "TF_VAR_ssh_public_key='${PUB_KEY}' terraform apply -auto-approve"
 
                 script {
                     env.VM_IP = sh(script: "terraform output -raw vm_ip", returnStdout: true).trim()
