@@ -8,6 +8,7 @@ pipeline {
 
     environment {
         SSH_CRED_ID = 'lab7'
+        PUB_KEY_ID  = 'vm-pub-key'
     }
 
     stages {
@@ -19,21 +20,19 @@ pipeline {
 
         stage('Terraform Apply') {
             steps {
-		withCredentials([sshUserPrivateKey(credentialsId: 'lab7', keyFileVariable: 'SSH_KEY_FILE', publicKeyVariable: 'PUB_KEY')]) {
-                sh "terraform init"
-                sh "TF_VAR_ssh_public_key='${PUB_KEY}' terraform apply -auto-approve"
-
+                withCredentials([string(credentialsId: "${PUB_KEY_ID}", variable: 'PUBLIC_KEY')]) {
+                    sh "terraform init"
+                    sh "TF_VAR_ssh_public_key='${PUBLIC_KEY}' terraform apply -auto-approve"
+                }
                 script {
                     env.VM_IP = sh(script: "terraform output -raw vm_ip", returnStdout: true).trim()
                     if (!env.VM_IP) {
                         error "IP address not found! Terraform output is empty."
                     }
-                     echo "Successfully retrieved VM IP: ${env.VM_IP}"
+                    echo "Successfully retrieved VM IP: ${env.VM_IP}"
+                }
             }
         }
-    } 
-}   
-
 
         stage('Ansible Deploy') {
             steps {
