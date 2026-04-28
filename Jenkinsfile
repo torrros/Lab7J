@@ -57,8 +57,12 @@ pipeline {
                 sh "TF_VAR_ssh_public_key='${PUBLIC_KEY}' terraform destroy -auto-approve"
             }
         }
+	success {
+            echo "Deployment successful!"
+	}
         always {
             cleanWs()
         }
     }
 }
+
